@@ -1,4 +1,4 @@
-function activity_vec = GetTxRxWindows(wav_stft, wav, t, f, fs, raw_stft, raw_wav)
+function activity_vec = GetTxRxWindows(wav_stft)
 
 threshold_cur_spec = prctile(abs(wav_stft(:)),97);
 activity_mat = abs(wav_stft)>threshold_cur_spec;
