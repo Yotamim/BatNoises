@@ -1,4 +1,4 @@
-function [resamp_centered_iq_sig, new_samp_rate] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
+function [resamp_centered_iq_sig, temp_samp_rate] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
 
 bat_pulse_freq = config.bat_config.bat_pulse_freq;
 center_freq = mean(relevant_band);
@@ -14,7 +14,11 @@ centering_wave = exp(-2*pi*1i*center_freq*time_vec);
 centered_iq_sig = iq_signal.*centering_wave;
 
 new_samp_rate = diff(relevant_band)*1.2;
-resamp_centered_iq_sig = resample(centered_iq_sig, new_samp_rate, fs);
+resamp_centered_iq_sig = downsample(centered_iq_sig, 4);
+temp_samp_rate = fs/4;
+assert(new_samp_rate<=temp_samp_rate);
+new_samp_rate = temp_samp_rate;
+% resamp_centered_iq_sig = resample(resamp_centered_iq_sig,new_samp_rate, ceil(temp_samp_rate));
 
 if 0
     freqs = linspace(-fs/2, fs/2, length(raw_audio));
@@ -31,10 +35,10 @@ if 0
     
     
     
-    n_freqs = linspace(-new_samp_rate/2, new_samp_rate/2, length(resamp_centered_iq_sig));
-    hold on; plot(n_freqs , fftshift(abs(fft(resamp_centered_iq_sig)))*fs/new_samp_rate)
+    n_freqs = linspace(-temp_samp_rate/2, temp_samp_rate/2, length(resamp_centered_iq_sig));
+    hold on; plot(n_freqs , fftshift(abs(fft(resamp_centered_iq_sig)))*fs/temp_samp_rate)
     
-    new_time_vec = (0:(length(resamp_centered_iq_sig)-1))*1/new_samp_rate;
+    new_time_vec = (0:(length(resamp_centered_iq_sig)-1))*1/temp_samp_rate;
     figure; plot(new_time_vec, real(resamp_centered_iq_sig), 'o'); hold on;
     plot(time_vec, real(centered_iq_sig)); 
 end

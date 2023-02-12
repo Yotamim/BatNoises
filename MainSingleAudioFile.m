@@ -1,4 +1,4 @@
-function MainSingleAudioFile(audio_path, config, PLOT_FLAG)
+function res_cell_per_audio = MainSingleAudioFile(audio_path, config, PLOT_FLAG)
 
 audio_info = audioinfo(audio_path);
 fs = audio_info.SampleRate;
@@ -25,7 +25,7 @@ tx_rx_times_array = spec_time_vec(tx_rx_inds_array);
 % PlotSpectogram(real(baseband_audio),bb_spec,bb_fs,spec_freq_vec_bb,spec_time_vec_bb)
 
 
-if PLOT_FLAG 
+if PLOT_FLAG == 0
 %     PlotSpectogram(filtered_audio,filter_spec,fs,spec_freq_vec,spec_time_vec)
 %     hold on; plot(tx_rx_times_array(:), zeros(size(tx_rx_times_array(:))), '*')
 %     plot((0:length(baseband_audio)-1)*1/bb_fs, real(baseband_audio)+0.1)
@@ -37,12 +37,12 @@ if PLOT_FLAG
     
 end
 
+res_cell_per_audio = {};
 for ith_tx_rx = 1:size(tx_rx_times_array ,1)
     if tx_rx_times_array(ith_tx_rx, 2)-tx_rx_times_array(ith_tx_rx, 1) >= 4*(spec_time_vec(2)-spec_time_vec(1))
-        if tx_rx_times_array(ith_tx_rx, 2)>6.2
-            ProcessSingleTxRx(baseband_audio(tx_rx_times_array(ith_tx_rx, 1)*bb_fs:tx_rx_times_array(ith_tx_rx, 2)*bb_fs), bb_fs, config)
-            
-        end
+        [current_dop_vals, cur_dops_freqs] = FindDopplerFromSpec(baseband_audio(tx_rx_times_array(ith_tx_rx, 1)*bb_fs:tx_rx_times_array(ith_tx_rx, 2)*bb_fs), bb_fs);
+        cur_row = TxRxRes2CellRow(current_dop_vals, cur_dops_freqs, tx_rx_times_array(ith_tx_rx,:), audio_path);
+        res_cell_per_audio = vertcat(res_cell_per_audio, cur_row);
     end
 end
 
