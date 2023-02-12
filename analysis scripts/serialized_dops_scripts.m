@@ -1,4 +1,4 @@
-base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\09-Feb-2023\";
+base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\08-Feb-2023\";
 all_res_folders = dir(base_res_path);
 bat_config = GetBatConfig;
 

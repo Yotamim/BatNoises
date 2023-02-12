@@ -16,9 +16,9 @@ for ith_folder = 3:length(all_res_folders)
             cell_line = res_cell_per_audio(ith_cell_line,:);
             if ~isempty(cell_line{1})
                 %             plot(cell_line{2}, cell_line{1}/max(cell_line{1})); hold on
-                [peaks,peak_inds] = findpeaks(cell_line{1}/max(cell_line{1}),"MinPeakHeight", 0.075 , Annotate="extents");
-                res_cell_per_audio{ith_cell_line,5} = cell_line{2}(peak_inds);
-                res_cell_per_audio{ith_cell_line,6} = length(peak_inds);
+                [peaks,peak_inds] = findpeaks(cell_line{2}/max(cell_line{2}),"MinPeakHeight", 0.075 , Annotate="extents");
+                res_cell_per_audio{ith_cell_line,6} = cell_line{3}(peak_inds);
+                res_cell_per_audio{ith_cell_line,7} = length(peak_inds);
                 %             plot(res_cell_per_audio{ith_cell_line,5}, peaks, "*")
                 %             hold off
             end

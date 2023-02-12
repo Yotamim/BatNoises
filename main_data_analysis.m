@@ -1,4 +1,5 @@
 close all; clear; clc; warning off all
+addpath(genpath(pwd))
 data_main_path = "C:\Users\yotam\Desktop\ProjectsData\data";
 git_info = importdata('C:\Users\yotam\Desktop\MatlabProjects\BatNoises\.git\logs\HEAD');
 base_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\";
@@ -14,7 +15,7 @@ bat_config = GetBatConfig;
 config.spec_config = spec_config;
 config.phys_config = phys_config;
 config.bat_config = bat_config;
-
+config.other_config.min_duration_from_histogram = 0.045; %sec
 for ith_folder = 3:length(all_data_folders)
     disp(ith_folder)
     ith_folder_full_path = [all_data_folders(ith_folder).folder,'\', all_data_folders(ith_folder).name];
