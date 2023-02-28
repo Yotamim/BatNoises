@@ -16,6 +16,7 @@ config.spec_config = spec_config;
 config.phys_config = phys_config;
 config.bat_config = bat_config;
 config.other_config.min_duration_from_histogram = 0.045; %sec
+
 for ith_folder = 3:length(all_data_folders)
     disp(ith_folder)
     ith_folder_full_path = [all_data_folders(ith_folder).folder,'\', all_data_folders(ith_folder).name];

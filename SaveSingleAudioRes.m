@@ -8,7 +8,7 @@ if ~isequal(exist(base_res_path+string(datetime("today"))+ "\git_info.m",'file')
    save(base_res_path+string(datetime("today"))+ "\git_info.m","git_info")
 end
 
-audio_string = res_cell_per_audio{1,4};
+audio_string = res_cell_per_audio{1,5};
 split_string = split(audio_string, "\");
 audio_folder = split_string{7};
 

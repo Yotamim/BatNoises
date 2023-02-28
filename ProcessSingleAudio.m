@@ -1,4 +1,4 @@
-function [resamp_centered_iq_sig, temp_samp_rate] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
+function [resamp_centered_iq_sig, new_samp_rate] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
 
 bat_pulse_freq = config.bat_config.bat_pulse_freq;
 center_freq = mean(relevant_band);
