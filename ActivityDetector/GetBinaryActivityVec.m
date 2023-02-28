@@ -1,4 +1,4 @@
-function activity_vec = GetTxRxWindows(wav_stft)
+function activity_vec = GetBinaryActivityVec(wav_stft, PLOT_FLAG)
 
 threshold_cur_spec = prctile(abs(wav_stft(:)),97);
 activity_mat = abs(wav_stft)>threshold_cur_spec;
@@ -7,7 +7,6 @@ pre_vec = movmean(sum(activity_mat,1),10);
 activity_vec = pre_vec>5;
 
 
-PLOT_FLAG = 0;
 if PLOT_FLAG
     figure; plot(pre_vec); hold on;
     plot(activity_vec*max(pre_vec))

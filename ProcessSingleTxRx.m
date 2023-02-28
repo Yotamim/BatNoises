@@ -1,57 +1,48 @@
-function ProcessSingleTxRx(single_trx_wav, fs, config)
+function cur_row = ProcessSingleTxRx(single_trx_bb, single_trx_pb_filt, bb_fs, fs, center_freq, times, audio_path, config)
 
-bat_pulse_freq = config.bat_config.bat_pulse_freq;
-speed_of_sound = config.phys_config.speed_of_sound;
-rel_speed_of_bat = config.bat_config.rel_speed_of_bat;
 
-recived_freq_range = bat_pulse_freq*((speed_of_sound+[-rel_speed_of_bat, rel_speed_of_bat])/speed_of_sound);
-doppler_shift_range = recived_freq_range-bat_pulse_freq;
-doppler_axis = linspace(doppler_shift_range(1), doppler_shift_range(2), 1001);
-time_axis = ((0:length(single_trx_wav)-1)/fs).';
+[current_dop_vals, cur_dops_freqs, cur_fft] = FindDopplerFromSpec(single_trx_bb, bb_fs);
+[~,peak_inds] = findpeaks(current_dop_vals/max(current_dop_vals),"MinPeakHeight", config.peak_detectors_config.min_peak_height_initial_dop);
 
-caf_mat1 = zeros(length(doppler_axis), 2*length(single_trx_wav)-1);
+peak_freqs = cur_dops_freqs(peak_inds);
+num_peaks = length(peak_inds);
 
-for ith_freq = 1:length(doppler_axis)
-    cur_freq = doppler_axis(ith_freq);
-    caf_mat1(ith_freq, :) = xcorr(single_trx_wav, exp(2*pi*1i*time_axis*cur_freq).*single_trx_wav);
-end
-
-if 0
-    positive_delays_caf_mat = caf_mat1(:,length(single_trx_wav):end);
-    figure; imagesc(time_axis, doppler_axis, pow2db(abs(positive_delays_caf_mat)))
-    title("regular corr - dB ")
-    set(gca, 'YDir', 'normal')
-    colormap jet
+if length(peak_freqs) == 2
+    half_freq_range = abs(diff(peak_freqs)*0.4);
+    tx_freq_range = [peak_freqs(1)-half_freq_range, peak_freqs(1)+half_freq_range]+center_freq;
+    echo_freq_range = [peak_freqs(2)-half_freq_range, peak_freqs(2)+half_freq_range]+center_freq;
     
-    figure; plot(max(movmean(abs(positive_delays_caf_mat),4000,2),[],2))
+
+    [time_xcor,time_lags,freq_xcor,freq_lags, filt_echo, filt_tx]= FilterEchoAndCorr(single_trx_pb_filt, fs, ...
+        tx_freq_range, echo_freq_range, true, false);
+    [~, delay_ind] = max(time_xcor);
+    delay = time_lags(delay_ind)/fs;
+
+    [~, dop_ind] = max(freq_xcor);
+    dop = freq_lags(dop_ind)*fs/length(single_trx_pb_filt);
+    filter_echo = [filt_echo.StopbandFrequency1,filt_echo.StopbandFrequency2];
+    filter_tx = [filt_tx.StopbandFrequency1,filt_tx.StopbandFrequency2];
+    
+    [~,dop_inds] = findpeaks(freq_xcor/max(freq_xcor), ...
+        "MinPeakHeight", config.peak_detectors_config.min_peak_height_secondary_dop, ...
+        "MinPeakDistance",config.peak_detectors_config.min_peaks_freq_dist_secondary_dop*length(single_trx_pb_filt)/fs, ...
+        "MinPeakProminence", config.peak_detectors_config.min_peaks_prominance_secondary_dop);
+
+    [~,first_echo_ind] = max(freq_xcor(dop_inds));
+    peaks_beyond_max_peak = freq_lags(dop_inds(first_echo_ind:end))*fs/length(single_trx_pb_filt);
+else
+    delay = NaN;
+    dop = NaN;
+    freq_xcor = NaN;
+    freq_lags = NaN;
+    peaks_beyond_max_peak = NaN;
+    filter_echo = NaN;
+    filter_tx = NaN;
 end
 
-[filter_spec, spec_freq_vec, spec_time_vec] = stft(single_trx_wav, fs, FFTLength=2*config.spec_config.fft_length,FrequencyRange="centered",...
-                        OverlapLength=128, Window=config.spec_config.window);
-PlotSpectogram(single_trx_wav,filter_spec,fs,spec_freq_vec,spec_time_vec)
-
-[A, B, C] = stft(single_trx_wav, fs, FFTLength=2*config.spec_config.fft_length,FrequencyRange="centered",...
-                        OverlapLength=64);
-PlotSpectogram(single_trx_wav,A,fs,spec_freq_vec,spec_time_vec)
-figure;plot(spec_freq_vec, sum(abs(filter_spec),2))
-figure;plot(abs(fftshift(fft(single_trx_wav))))
-
-aaa = single_trx_wav(0.064*fs:0.068*fs);
-xcor_vec = norm_cor_yot(single_trx_wav,aaa,1);
-
-caf_mat2 = zeros(length(doppler_axis), length(xcor_vec));
-for ith_freq = 1:length(doppler_axis)
-    cur_freq = doppler_axis(ith_freq);
-    caf_mat2(ith_freq, :) = norm_cor_yot(exp(2*pi*1i*time_axis*cur_freq).*single_trx_wav,aaa,1);
-end
-
-figure; imagesc([], doppler_axis, pow2db(abs(caf_mat2)))
-title("regular corr - dB ")
-set(gca, 'YDir', 'normal')
-colormap jet
-
-figure;plot(abs(xcor_vec))
-figure;plot(abs(caf_mat2(501,:)))
+cur_row = TxRxRes2CellRow(cur_fft, current_dop_vals, cur_dops_freqs, times, ...
+    audio_path, peak_freqs, num_peaks, bb_fs, delay, dop, freq_xcor, freq_lags, peaks_beyond_max_peak, ...
+    filter_echo, filter_tx);
 
 end
 

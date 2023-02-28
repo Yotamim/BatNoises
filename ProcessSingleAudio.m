@@ -1,7 +1,8 @@
-function [resamp_centered_iq_sig, new_samp_rate] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
+function [resamp_centered_iq_sig, new_samp_rate, filtered_audio, center_freq] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
 
 bat_pulse_freq = config.bat_config.bat_pulse_freq;
 center_freq = mean(relevant_band);
+
 assert(center_freq == bat_pulse_freq, "using different bat pulse and centering freq")
 
 time_vec = (0:length(raw_audio)-1)/fs;
@@ -18,9 +19,8 @@ resamp_centered_iq_sig = downsample(centered_iq_sig, 4);
 temp_samp_rate = fs/4;
 assert(new_samp_rate<=temp_samp_rate);
 new_samp_rate = temp_samp_rate;
-% resamp_centered_iq_sig = resample(resamp_centered_iq_sig,new_samp_rate, ceil(temp_samp_rate));
 
-if 0
+if config.plot_config.plot_audio_to_bb_sanity_check
     freqs = linspace(-fs/2, fs/2, length(raw_audio));
     figure; plot(freqs , fftshift(abs(fft(raw_audio))))
     title('fft')
