@@ -13,6 +13,6 @@ end
 if config.plot_config.plot_filtered_spec_bb_audio_and_detection
     [filter_spec, spec_freq_vec, spec_time_vec] = stft(filtered_audio, fs, FFTLength=4*config.spec_config.fft_length,FrequencyRange=config.spec_config.freq_range,...
         OverlapLength=config.spec_config.overlap, Window=config.spec_config.window);
-    PlotSpectogram(baseband_audio,filter_spec,bb_fs,spec_freq_vec,spec_time_vec)
+    PlotSpectogram(baseband_audio,filter_spec,bb_fs,spec_freq_vec,spec_time_vec, 1)
     hold on; plot(tx_rx_times_array(:), zeros(size(tx_rx_times_array(:))), '*')
 end

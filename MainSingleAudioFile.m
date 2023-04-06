@@ -5,11 +5,11 @@ relevant_band = config.bat_config.bat_pulse_freq+config.bat_config.bat_dynamic_r
 audio_info = audioinfo(audio_path);
 fs = audio_info.SampleRate;
 raw_wav = audioread(audio_path);
+raw_wav = raw_wav-mean(raw_wav);
 
 [baseband_audio, bb_fs, filtered_audio, center_freq] = ProcessSingleAudio(raw_wav, relevant_band, fs, config);
 
 tx_rx_times_array = ActivityDetectorMain(filtered_audio, fs, config);
-
 specs_plot_script
 
 res_cell_per_audio = {};

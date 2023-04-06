@@ -13,7 +13,8 @@ if PLOT_FLAG
 
     fig1 = figure; 
     ax1 = subplot(2,1,1);
-    imagesc(abs(wav_stft))
+    imagesc(pow2db(abs(wav_stft)))
+    colormap jet
     fig1.Children.YDir = "normal";
     xlabel("time");
     ylabel("freq");
@@ -23,7 +24,7 @@ if PLOT_FLAG
     
     fig1 = figure; 
     ax3 = subplot(2,1,1);
-    imagesc(t,f, pow2db(abs(raw_stft)))
+    imagesc( abs(activity_mat))
     fig1.Children.YDir = "normal";
     xlabel("time");
     ylabel("freq");

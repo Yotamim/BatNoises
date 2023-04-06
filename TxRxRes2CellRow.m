@@ -1,7 +1,8 @@
-function cell_row = TxRxRes2CellRow(fft_data, dop_vals, dops_freqs, times, audio_path, ...
-    peak_freqs, num_peaks, bb_fs, delay, dop, freq_xcor,freq_lags, peaks_beyond_max_peak, filter_echo, filter_tx)
+function cell_row = TxRxRes2CellRow(filtered_fft, dop_vals, dops_freqs, times, audio_path, ...
+    peak_freqs, num_peaks, bb_fs, delay, dop, freq_xcor,freq_lags, peaks_beyond_max_peak, filter_echo, filter_tx, ...
+    tx_freq_from_filtered_fft, tx_freq_from_filtered_tx_fft)
 
-cell_row{1} = fft_data;
+cell_row{1} = filtered_fft;
 cell_row{2} = dop_vals;
 cell_row{3} = dops_freqs;
 cell_row{4} = times;
@@ -16,4 +17,6 @@ cell_row{12} = freq_lags;
 cell_row{13} = peaks_beyond_max_peak;
 cell_row{14} = filter_echo;
 cell_row{15} = filter_tx;
+cell_row{16} = tx_freq_from_filtered_fft;
+cell_row{17} = tx_freq_from_filtered_tx_fft;
 end
