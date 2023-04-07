@@ -1,7 +1,7 @@
 function [resamp_centered_iq_sig, new_samp_rate, filtered_audio, center_freq] = ProcessSingleAudio(raw_audio, relevant_band, fs, config)
 
 bat_pulse_freq = config.bat_config.bat_pulse_freq;
-center_freq = mean(relevant_band);
+center_freq = config.bat_config.bat_pulse_freq;
 
 assert(center_freq == bat_pulse_freq, "using different bat pulse and centering freq")
 

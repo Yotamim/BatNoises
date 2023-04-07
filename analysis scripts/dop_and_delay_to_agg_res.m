@@ -96,5 +96,5 @@ end
 
 all_rx_freqs = all_dops_mat+all_tx_freq;
 save(base_res_path+"aggregate_results","all_rx_freqs","all_tx_freq", "all_delays", "all_tx_time","all_wav_ind", ...
-    "map_wav_ind_to_path", "all_gps_times",  "all_speeds")
+    "map_wav_ind_to_path", "all_gps_times",  "all_speeds", "all_durations")
 

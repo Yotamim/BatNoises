@@ -1,4 +1,6 @@
-function [start_time_tx,start_time_echo,freq_xcor,freq_lags, filt_echo, filt_tx, tx_freq] = FilterEchoAndCorr(data, fs, tx_freq_range, echo_freq_range, expand_dop_search, PLOT_FLAG, config)
+function [start_time_tx,start_time_echo,freq_xcor,freq_lags, filt_echo, filt_tx, tx_freq,...
+    filtered_echo, filtered_tx, smooth_tx_fft_var, smooth_echo_fft_var] = ...
+FilterEchoAndCorr(data, fs, tx_freq_range, echo_freq_range, expand_dop_search, PLOT_FLAG, config)
 
 n_points = length(data);
 t_vec = (0:length(data)-1)/fs;
@@ -23,6 +25,9 @@ end
 smooth_echo_fft = movmean(abs(fftshift(fft(hilbert(filtered_echo)))), 5);
 smooth_tx_fft = movmean(abs(fftshift(fft(hilbert(filtered_tx)))), 5);
 
+smooth_tx_fft_var = var(smooth_tx_fft);
+smooth_echo_fft_var = var(smooth_echo_fft);
+
 [~,tx_freq_ind] = max(smooth_tx_fft);
 tx_freq = abs(f_vec(tx_freq_ind));
 [freq_xcor,freq_lags] = xcorr(abs(smooth_echo_fft),abs(smooth_tx_fft));
@@ -44,8 +49,8 @@ if 0
     plot(f_vec, abs(fftshift(fft(filtered_tx)))); hold on
     plot(f_vec, abs(fftshift(fft(filtered_echo))))
     subplot(2,3,3)
-    plot(t_vec, abs(filtered_tx));hold on;
-    plot(t_vec, abs(filtered_echo));
+    plot(t_vec, data);
+    
     title("filtered time signal")
 
     ax4 = subplot(2,3,4);
@@ -87,10 +92,10 @@ if 0
     linkaxes([ax4, ax5, ax6], 'x')
     move_fig_to_laptop_screen_home
 
-    figure; plot(t_axis_spec,vectx); hold on; plot(t_axis_spec,vectecho)
-    plot(start_timeecho,0,"*")
-    plot(start_timetx,0,"*")
-    disp(start_timeecho)
-    disp(start_timetx)
+%     figure; plot(t_axis_spec,vectx); hold on; plot(t_axis_spec,vectecho)
+%     plot(start_timeecho,0,"*")
+%     plot(start_timetx,0,"*")
+%     disp(start_timeecho)
+%     disp(start_timetx)
 end
 end

@@ -1,10 +1,10 @@
-clear
-base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\03-Mar-2023\";
-addpath C:\Users\yotam\Desktop\MatlabProjects\Tools\
-load(base_res_path + "aggregate_results.mat")
-cn = ColumnNames2Inds();
-config = GetConfig;
-low_tx_freqs_inds = find(all_tx_freq<7.45e4 & all_tx_freq>7.4e4);
+% clear
+% base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\03-Mar-2023\";
+% addpath C:\Users\yotam\Desktop\MatlabProjects\Tools\
+% load(base_res_path + "aggregate_results.mat")
+% cn = ColumnNames2Inds();
+% config = GetConfig;
+% low_tx_freqs_inds = find(all_tx_freq<7.45e4 & all_tx_freq>7.4e4);
 
 for low_tx_rrr = 1:length(low_tx_freqs_inds)
     ith_low_ftx = low_tx_freqs_inds(randi(length(low_tx_freqs_inds)));
@@ -19,11 +19,11 @@ for low_tx_rrr = 1:length(low_tx_freqs_inds)
     wav_string = replace(wav_string, "\MatlabProjects\BatNoises\results\03-Mar-2023\", "\ProjectsData\data\");
 
     raw_wav = audioread(wav_string);
-    relevant_band = config.bat_config.bat_pulse_freq+config.bat_config.bat_dynamic_range;
+    relevant_band = [config.bat_config.bat_pulse_freq-config.bat_config.chirp_range, config.bat_config.bat_pulse_freq+5000];
     audio_info = audioinfo(wav_string);
     fs = audio_info.SampleRate;
     [baseband_audio, bb_fs, filtered_audio, center_freq] = ProcessSingleAudio(raw_wav, relevant_band, fs, config);
-
+    
     tx_times = vertcat(res_cell_per_audio{:,cn.times});
     cur_row_ind = find(tx_times(:,1) == cur_tx );
     cur_row = res_cell_per_audio(cur_row_ind,:);
