@@ -1,6 +1,6 @@
 close all; clear; clc; warning off all
 addpath(genpath(pwd))
-data_main_path = "C:\Users\yotam\Desktop\ProjectsData\bat02";
+% data_main_path = "C:\Users\yotam\Desktop\ProjectsData\bat02";
 data_main_path = "C:\Users\yotam\Desktop\ProjectsData\data";
 % data_main_path = "C:\Users\yotam\Desktop\ProjectsData\bat04";
 git_info = importdata('C:\Users\yotam\Desktop\MatlabProjects\BatNoises\.git\logs\HEAD');

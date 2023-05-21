@@ -6,6 +6,7 @@ current_dop_vals_for_res = current_dop_vals;
 peak_freqs = cur_dops_freqs(peak_inds);
 peak_freqs_vals = current_dop_vals(peak_inds);
 num_peaks = length(peak_inds);
+
 while length(peak_freqs_vals) > 1 && peak_freqs_vals(1)<max(peak_freqs_vals)
     current_dop_vals(cur_dops_freqs <= peak_freqs(1)) = 0;
     [~,peak_inds] = findpeaks(current_dop_vals/max(current_dop_vals),"MinPeakHeight", config.peak_detectors_config.min_peak_height_initial_dop);

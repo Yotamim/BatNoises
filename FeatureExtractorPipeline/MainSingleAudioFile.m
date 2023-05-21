@@ -37,11 +37,15 @@ for ith_tx_rx = 1:size(tx_rx_time_array_with_spltis,1)
     
     s_time = tx_rx_time_array_with_spltis(ith_tx_rx, 1);
     e_time = tx_rx_time_array_with_spltis(ith_tx_rx, 2);
+    if config.mode == "tagged_data_only" && ~IsCallTagged(s_time, e_time, audio_path, config.tagged_data_table)
+        continue
+    end
     cur_row = ProcessSingleTxRx( ...
         baseband_audio(s_time*bb_fs:e_time*bb_fs), ...
         filtered_audio(s_time*fs:e_time*fs), ...
         bb_fs, fs, center_freq, [s_time, e_time], audio_path, config);
     res_cell_per_audio = vertcat(res_cell_per_audio, cur_row);
+    
     
 end
 

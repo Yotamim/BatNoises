@@ -1,10 +1,7 @@
 % close all
 clear
 base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\08-Apr-2023\";
-fig_dir = base_res_path+"figs\";
-if ~isfolder(fig_dir)
-    mkdir(fig_dir)
-end
+
 load(base_res_path + "agg_res_table.mat")
 res_table_2_peaks = res_table(res_table.num_peaks == 2,:);
 res_table_1_peak = res_table(res_table.num_peaks == 1,:);
