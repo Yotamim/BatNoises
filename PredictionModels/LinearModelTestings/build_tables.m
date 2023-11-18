@@ -1,0 +1,76 @@
+clear
+base_fig_dir = "C:\Users\yotam\Desktop\figs3\";
+dir1 = dir(base_fig_dir);
+all_mat_files = {};
+for i = 3:length(dir1)
+    dir2 = dir(fullfile(dir1(i).folder,dir1(i).name));
+    for j = 3:length(dir2)
+        dir3 = dir(fullfile(dir2(j).folder,dir2(j).name));
+        for k = 3:length(dir3)
+            if contains(dir3(k).name, ".m")
+                all_mat_files{end+1} = fullfile(dir3(k).folder,dir3(k).name);
+            end
+        end
+    end
+end
+all_mat_files = all_mat_files';
+prediction_name = "tx_freq";
+% features = string({"tx_freq", "measured_doppler_difference","target_freq_by_recived_freq", "recived_freq-target_freq"});
+% features = features + "-1";
+features_raw = string({"tx_freq_from_filtered_tx_fft", "echo_doppler","target_divided_by_rx","diff_from_desired"});
+
+num_feat_comb = 4;
+rows = ["bat2","bat4","bat5"].';
+movtype = ["woods", "field", "water", "hunting"];
+% emptyTable = cell2table(cell(length(rows), length(features_raw)), 'RowNames', rows, 'VariableNames', features_raw);
+% bat_dict = struct();
+% bat_dict.bat2 = 1; bat_dict.bat4 = 2; bat_dict.bat5 = 3;
+for n_window = ["3_calls","2_calls"]
+    wind_features_raw = [features_raw+"-1", features_raw+"-2"];
+    wind_features_raw(end+1) = "(Intercept)";
+    
+    for bat_num = ["2","4","5"]
+        per_bat_empty_cell_array = cell(1, length(features_raw)+3);
+        movement_counter = 0;
+        rows_names = [];
+
+        for movement = movtype %rows
+            for ith_mdl = 1:length(all_mat_files)
+                cur_name = all_mat_files{ith_mdl};
+                mdl_bat_str = split(cur_name, "figs3\");
+                mdl_bat_str = mdl_bat_str{2}(1);
+                mdl_movement = split(cur_name, "model_");
+                mdl_movement = split(mdl_movement{2}, "_");
+                mdl_movement = mdl_movement{1};
+                if bat_num == mdl_bat_str && movement == mdl_movement && contains(cur_name, n_window)
+                    load(cur_name)
+                    movement_counter = movement_counter+1;
+                    rows_names = [rows_names; movement+num2str(movement_counter)];
+                    for ith_feat = 1:length(wind_features_raw)
+                        if any(contains(string(mdl.Coefficients.Row), wind_features_raw(ith_feat)))
+                            per_bat_empty_cell_array{movement_counter, ith_feat} = num2str(mdl.Coefficients(wind_features_raw(ith_feat), "Estimate").Variables);
+                        else
+                            per_bat_empty_cell_array{movement_counter, ith_feat} = "---";
+                        end
+                    end
+                    per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+1} = length(mdl.Residuals.Raw);
+                    per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+2} = num2str(vecnorm(mdl.Residuals.Raw));
+                    per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+3} = num2str(mdl.ModelCriterion.BIC);
+                    per_bat_empty_cell_array = [per_bat_empty_cell_array;cell(1, length(wind_features_raw)+3)];
+                end
+            end
+        end
+%         per_bat_empty_cell_array = per_bat_empty_cell_array(cellfun(@(x) ~isempty(x), per_bat_empty_cell_array));
+        per_bat_empty_cell_array(end,:) = [];
+        features_to_format = FormatFeatures(wind_features_raw, prediction_name);
+        bat_table = cell2table(per_bat_empty_cell_array,"VariableNames",[features_to_format, "data_points", "RMSE", "BIC"]);
+        bat_table.movement_type = rows_names;
+        bat_table = bat_table(:,[length(bat_table.Properties.VariableNames), 1:length(bat_table.Properties.VariableNames)-1]);
+        writetable(bat_table, base_fig_dir+sprintf("bat%s_%s.xlsx",bat_num,n_window))
+    end
+end
+
+
+
+
+

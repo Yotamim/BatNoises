@@ -4,7 +4,7 @@ function cont_inds_cell = GetNContinuesInds(times, bat_inds, n_window)
 wind = zeros(n_window,1);
 wind(1) = 1;
 wind(n_window) = -1;
-thresh = (n_window-1)*0.3;
+thresh = (n_window-1)*0.15;
 inds_of_end_of_wavs = find(diff(times)<0 & diff(bat_inds) == 0);
 inds_of_end_of_wavs = [inds_of_end_of_wavs; length(times)];
 cur_start_wav = 1;

@@ -31,11 +31,8 @@ for ith_folder = 3:length(all_res_folders)
 end
 gps_epoch = datetime("31-Dec--1 00:00:00");
 plot_speed_and_loc_over_time_per_bat
+plot_bat_loc_on_map
 
-base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\08-Apr-2023\";
-load(base_res_path + "agg_res_table.mat")
-res_table_2_peaks = res_table(res_table.num_peaks == 2,:);
-res_table_1_peak = res_table(res_table.num_peaks == 1,:);
 
 
 

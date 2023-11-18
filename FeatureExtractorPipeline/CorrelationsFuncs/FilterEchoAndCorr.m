@@ -5,7 +5,7 @@ FilterEchoAndCorr(data, fs, tx_freq_range, echo_freq_range, expand_dop_search, P
 n_points = length(data);
 t_vec = (0:length(data)-1)/fs;
 f_vec = linspace(-n_points/2, (n_points-1)/2, n_points).'*fs/n_points;
-
+  
 [filtered_tx, filt_tx] = bandpass(data, tx_freq_range, fs, "Steepness",0.99);
 [filtered_echo, filt_echo] = bandpass(data, echo_freq_range, fs,"Steepness",0.99);
 

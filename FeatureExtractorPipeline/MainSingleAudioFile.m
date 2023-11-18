@@ -1,7 +1,6 @@
 function res_cell_per_audio = MainSingleAudioFile(audio_path, config, PLOT_FLAG)
 
 relevant_band = config.bat_config.bat_pulse_freq+config.bat_config.bat_dynamic_range;
-
 audio_info = audioinfo(audio_path);
 fs = audio_info.SampleRate;
 raw_wav = audioread(audio_path);
@@ -37,9 +36,9 @@ for ith_tx_rx = 1:size(tx_rx_time_array_with_spltis,1)
     
     s_time = tx_rx_time_array_with_spltis(ith_tx_rx, 1);
     e_time = tx_rx_time_array_with_spltis(ith_tx_rx, 2);
-    if config.mode == "tagged_data_only" && ~IsCallTagged(s_time, e_time, audio_path, config.tagged_data_table)
-        continue
-    end
+%     if config.mode == "tagged_data_only" && ~IsCallTagged(s_time, e_time, audio_path, config.tagged_data_table)
+%         continue
+%     end
     cur_row = ProcessSingleTxRx( ...
         baseband_audio(s_time*bb_fs:e_time*bb_fs), ...
         filtered_audio(s_time*fs:e_time*fs), ...

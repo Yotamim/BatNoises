@@ -30,7 +30,6 @@ for jth_features_comb = what_featuers_to_use
             [X, y, var_names, cont_inds_as_rows_passing_thrsholds, vaild_inds, cur_bat_gps_match] = ...
                 ContIndsAndFeatures2XData(res_table_2_peaks, threshold_dict_sig, cont_inds_cell,...
                 jth_features_comb, n_window, bat_num, prediction_name);
-            MarkEchoTypeThings(X)
             vaild_inds = vaild_inds(:,1);
             y_for_plot = sum(y,2);
 %             X(:,3) = X(:,3)+X(:,4)-ststst.bat5;

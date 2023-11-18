@@ -17,7 +17,7 @@ res_table_2_peaks.diff_from_desired = res_table_2_peaks.rx_freq-res_table_2_peak
 
 all_tx_time = res_table_2_peaks.times(:,1);
 n_windows = [2,3,4,5];
-threshold_dict_sig = struct("tx_freq_from_filtered_tx_fft", [75000,81000], "rx_freq", [78000,82500], "durations", [0,0.15]);
+threshold_dict_sig = struct("tx_freq_from_filtered_tx_fft", [77000,80500], "rx_freq", [79000,80500], "durations", [0,0.15]);
 
 features_lsboost_sss = {...
     {"tx_freq_from_filtered_tx_fft", "echo_doppler", "diff_from_desired"}};
@@ -56,7 +56,7 @@ for ith_window = 1:length(n_windows)
             perm_inds = randperm(height(X_table));
             train_inds = perm_inds(1:ceil(length(perm_inds)*p));
             test_inds = perm_inds(ceil(length(perm_inds)*p)+1:end);
-            mdl_lsboost = fitrensemble(X_table(train_inds,:), var_names{end});
+            mdl_lsboost = (X_table(train_inds,:), var_names{end});
             pred_y_LSBOOST_test = predict(mdl_lsboost,X_table(test_inds,:));
             pred_y_LSBOOST_train = predict(mdl_lsboost,X_table(train_inds,:));
 

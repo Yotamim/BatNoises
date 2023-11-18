@@ -24,14 +24,17 @@ for ith_ind = 1:size(cont_inds_as_rows_passing_thrsholds,2)-1
 end
 if prediction_name == "tx_freq_diff"
     y = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).tx_freq_from_filtered_tx_fft -...
-    res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end-1),:).tx_freq_from_filtered_tx_fft;
+        res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end-1),:).tx_freq_from_filtered_tx_fft;
 elseif prediction_name == "tx_freq"
     y = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).tx_freq_from_filtered_tx_fft;
 end
 y = [y, res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end-1),:).tx_freq_from_filtered_tx_fft];
 % y = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).tx_freq_from_filtered_tx_fft;
-
-y_speed = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).speed;
+try
+    y_speed = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).speed;
+catch
+    y_speed = zeros(height(res_table_2_peaks),1);
+end
 y_gps_match = abs(res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).diff_from_closest_gps);
 if any(cellfun(@(x) contains(x, "speed"), features_to_use))
     X = [X,y_speed];
