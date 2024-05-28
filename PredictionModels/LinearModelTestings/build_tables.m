@@ -1,5 +1,7 @@
 clear
-base_fig_dir = "C:\Users\yotam\Desktop\figs3\";
+base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\figs_240526-rx_to_tx_rat\";
+features_raw = string({"tx_diveded_by_rx"});
+
 dir1 = dir(base_fig_dir);
 all_mat_files = {};
 for i = 3:length(dir1)
@@ -15,18 +17,21 @@ for i = 3:length(dir1)
 end
 all_mat_files = all_mat_files';
 prediction_name = "tx_freq";
-% features = string({"tx_freq", "measured_doppler_difference","target_freq_by_recived_freq", "recived_freq-target_freq"});
-% features = features + "-1";
-features_raw = string({"tx_freq_from_filtered_tx_fft", "echo_doppler","target_divided_by_rx","diff_from_desired"});
 
 num_feat_comb = 4;
 rows = ["bat2","bat4","bat5"].';
-movtype = ["woods", "field", "water", "hunting"];
+movtype = ["woods", "field", "hunting"];
 % emptyTable = cell2table(cell(length(rows), length(features_raw)), 'RowNames', rows, 'VariableNames', features_raw);
 % bat_dict = struct();
 % bat_dict.bat2 = 1; bat_dict.bat4 = 2; bat_dict.bat5 = 3;
-for n_window = ["3_calls","2_calls"]
-    wind_features_raw = [features_raw+"-1", features_raw+"-2"];
+for n_window = ["2_calls", "3_calls","4_calls","5_calls"]
+    num_calls_back = str2double(extractBefore(n_window, "_calls"))-1;
+    wind_features_raw = [];
+    for i = 1:num_calls_back
+        wind_features_raw = [wind_features_raw, features_raw+num2str(-i)];
+    end
+    wind_features_raw = repelem(wind_features_raw,2);
+    wind_features_raw(2:2:end) = wind_features_raw(2:2:end) + "p_value";
     wind_features_raw(end+1) = "(Intercept)";
     
     for bat_num = ["2","4","5"]
@@ -37,10 +42,10 @@ for n_window = ["3_calls","2_calls"]
         for movement = movtype %rows
             for ith_mdl = 1:length(all_mat_files)
                 cur_name = all_mat_files{ith_mdl};
-                mdl_bat_str = split(cur_name, "figs3\");
-                mdl_bat_str = mdl_bat_str{2}(1);
-                mdl_movement = split(cur_name, "model_");
-                mdl_movement = split(mdl_movement{2}, "_");
+                [cur_filepath,cur_filename] = fileparts(cur_name);
+                mdl_bat_str = split(extractBetween(cur_filepath, "FigsAndTables\","_calls"), "\");
+                mdl_bat_str = mdl_bat_str{2};
+                mdl_movement = extractBetween(string(cur_filename), "model_", "_");
                 mdl_movement = mdl_movement{1};
                 if bat_num == mdl_bat_str && movement == mdl_movement && contains(cur_name, n_window)
                     load(cur_name)
@@ -49,6 +54,8 @@ for n_window = ["3_calls","2_calls"]
                     for ith_feat = 1:length(wind_features_raw)
                         if any(contains(string(mdl.Coefficients.Row), wind_features_raw(ith_feat)))
                             per_bat_empty_cell_array{movement_counter, ith_feat} = num2str(mdl.Coefficients(wind_features_raw(ith_feat), "Estimate").Variables);
+                        elseif contains(wind_features_raw(ith_feat),"p_value") && any(contains(string(mdl.Coefficients.Row), wind_features_raw(ith_feat-1)))
+                            per_bat_empty_cell_array{movement_counter, ith_feat} = num2str(mdl.Coefficients(wind_features_raw(ith_feat-1), "pValue").Variables);   
                         else
                             per_bat_empty_cell_array{movement_counter, ith_feat} = "---";
                         end
@@ -66,6 +73,11 @@ for n_window = ["3_calls","2_calls"]
         bat_table = cell2table(per_bat_empty_cell_array,"VariableNames",[features_to_format, "data_points", "RMSE", "BIC"]);
         bat_table.movement_type = rows_names;
         bat_table = bat_table(:,[length(bat_table.Properties.VariableNames), 1:length(bat_table.Properties.VariableNames)-1]);
+        if n_window == "2_calls"
+            bat_table = bat_table(:,~contains(bat_table.Properties.VariableNames, "-2"));
+        end
+        bat_table = FormatTableForSaving(bat_table);
+        
         writetable(bat_table, base_fig_dir+sprintf("bat%s_%s.xlsx",bat_num,n_window))
     end
 end

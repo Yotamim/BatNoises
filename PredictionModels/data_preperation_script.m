@@ -7,6 +7,7 @@ if ~isfolder(fig_dir)
 end
 load(base_res_path + "agg_res_table.mat")
 res_table_2_peaks = res_table(res_table.num_peaks == 2,:);
+
 res_table_1_peak = res_table(res_table.num_peaks == 1,:);
 
 static_freq_struct = GetStaticFreq(res_table_1_peak);
@@ -29,6 +30,7 @@ movtypenum(strings_mvment == "field") = 2;
 movtypenum(strings_mvment == "water") = 3;
 movtypenum(strings_mvment == "hunting") = 4;
 res_table_2_peaks.movement_type_num = movtypenum;
+res_table_2_peaks(res_table_2_peaks.movement_type == "water",:) = [];
 res_table_2_peaks.target_divided_by_rx = res_table_2_peaks.("desired_rx_freq")./(res_table_2_peaks.("tx_freq_from_filtered_tx_fft")+res_table_2_peaks.("echo_doppler"));
 res_table_2_peaks.tx_diveded_by_rx = res_table_2_peaks.("tx_freq_from_filtered_tx_fft")./(res_table_2_peaks.("tx_freq_from_filtered_tx_fft")+res_table_2_peaks.("echo_doppler"));
 all_tx_time = res_table_2_peaks.times(:,1);

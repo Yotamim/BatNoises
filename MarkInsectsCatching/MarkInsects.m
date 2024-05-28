@@ -18,7 +18,7 @@ colormap jet
 set(gca, "YDir", "normal")
 xlabel("time");
 ylabel("freq");
-
+ylim([6e4,8.5e4])
 
 subplot(2,1,2)
 clims = [max(pow2db(abs(filter_spec(:))))-30, max(pow2db(abs(filter_spec(:))))];
@@ -27,7 +27,7 @@ colormap jet
 set(gca, "YDir", "normal")
 xlabel("time");
 ylabel("freq");
-
+ylim([6e4,8.5e4])
 sgtitle(replace(audio_path, "_", " "))
-move_figs_to_laptop_screen_Tali
+move_fig_to_laptop_screen_home
 end

@@ -103,7 +103,7 @@ while ~move_to_next_wav
     first_button_pos = [1430         350         100          20];
 
     SetButtonsPositions(gcf,first_button_pos)
-%     move_fig_to_laptop_screen_home
+    move_fig_to_laptop_screen_home
     while ~move_to_next_call && ~move_to_next_wav 
         pause(0.5)
         move_to_next_call = get(next_call_h, "Value");

@@ -1,10 +1,8 @@
-clear
+
 base_res_path = "C:\Users\yotam\Desktop\MatlabProjects\BatNoises\results\08-Apr-2023\";
-fig_dir = base_res_path+"figs\";
-if ~isfolder(fig_dir)
-    mkdir(fig_dir)
-end
 load(base_res_path + "agg_res_table.mat")
+
+% load("C:\Users\yotam\Desktop\MatlabProjects\BatNoises\MarkInsectsCatching\only_perches.mat");res_table = res_table_interesting;
 res_table_2_peaks = res_table(res_table.num_peaks == 2,:);
 res_table_1_peak = res_table(res_table.num_peaks == 1,:);
 
@@ -36,7 +34,8 @@ res_table_2_peaks.tx_diveded_by_tx = res_table_2_peaks.("tx_freq_from_filtered_t
 all_tx_time = res_table_2_peaks.times(:,1);
 threshold_dict_sig = struct("tx_freq_from_filtered_tx_fft", [77000,81000], "rx_freq", [78500,82000], "durations", [0,0.15]);
 
-features_lsboost_sss = {{"echo_doppler","tx_freq_from_filtered_tx_fft", "desired_rx_freq","diff_from_desired", "movement_type_num"}};
+% features_lsboost_sss = {{"echo_doppler","tx_freq_from_filtered_tx_fft", "desired_rx_freq","diff_from_desired", "movement_type_num"}};
+features_lsboost_sss = {{"echo_doppler","tx_freq_from_filtered_tx_fft", "speed"}};
 prediction_name = "tx_freq";
 
 n_windows = 3;
@@ -60,12 +59,12 @@ for ith_window = 1:length(n_windows)
         end
     end
 end
+% 
+% X_table.alpha1 = X_table.("desired_rx_freq-1")./(X_table.("tx_freq_from_filtered_tx_fft-1")+X_table.("echo_doppler-1"));
+% X_table.alpha2 = X_table.("desired_rx_freq-2")./(X_table.("tx_freq_from_filtered_tx_fft-2")+X_table.("echo_doppler-2"));
 
-X_table.alpha1 = X_table.("desired_rx_freq-1")./(X_table.("tx_freq_from_filtered_tx_fft-1")+X_table.("echo_doppler-1"));
-X_table.alpha2 = X_table.("desired_rx_freq-2")./(X_table.("tx_freq_from_filtered_tx_fft-2")+X_table.("echo_doppler-2"));
 
-
-R_table = X_table(X_table.("movement_type_num-1") == 2,:);
+% R_table = X_table(X_table.("movement_type_num-1") == 2,:);
 
 % figure;
 % histogram(X_table.("echo_doppler-1")+X_table.("tx_freq_from_filtered_tx_fft-1"))

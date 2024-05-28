@@ -30,17 +30,16 @@ elseif prediction_name == "tx_freq"
 end
 y = [y, res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end-1),:).tx_freq_from_filtered_tx_fft];
 % y = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).tx_freq_from_filtered_tx_fft;
-try
-    y_speed = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).speed;
-catch
-    y_speed = zeros(height(res_table_2_peaks),1);
-end
+% try
+%     y_speed = res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).speed;
+% catch
+%     y_speed = zeros(height(res_table_2_peaks),1);
+% end
 y_gps_match = abs(res_table_2_peaks(cont_inds_as_rows_passing_thrsholds(:,end),:).diff_from_closest_gps);
-if any(cellfun(@(x) contains(x, "speed"), features_to_use))
-    X = [X,y_speed];
-    var_names{end+1} = "speed-0";
+speeds_variables = cellfun(@(x) contains(x, "speed"), features_to_use);
+if any(speeds_variables)
     cur_bat_gps_match = [cur_bat_gps_match,y_gps_match];
-    vaild_inds = max(cur_bat_gps_match,[],2)<10 & sum(isnan(X),2) == 0;
+    vaild_inds = max(cur_bat_gps_match,[],2)<10 & sum(~isnan(str2double(X(:,speeds_variables))),2) ~= 0;
 else
     vaild_inds = true(size(y));
 end

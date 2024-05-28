@@ -1,22 +1,22 @@
 clear; close all;
 %% Load and prepare data
 data_preperation_script
-
+base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\figs_240526-rx_to_tx_rat\";
+res_table_2_peaks.max_doppler_diff = res_table_2_peaks.max_doppler-res_table_2_peaks.tx_freq_from_filtered_tx_fft;
 %% Pre loop
 threshold_dict_sig = struct("tx_freq_from_filtered_tx_fft", [77000,81000], "rx_freq", [78500,82000], "durations", [0,0.15]);
 
 features_combinations = {
-%     {"tx_freq_from_filtered_tx_fft", "echo_doppler", "movement_type"},
-%     {"tx_freq_from_filtered_tx_fft", "target_divided_by_rx", "movement_type"},
-%     {"tx_freq_from_filtered_tx_fft", "diff_from_desired", "movement_type"},
+%     {"echo_doppler", "movement_type"},
+      {"tx_diveded_by_rx", "movement_type"},
 %     {"tx_freq_from_filtered_tx_fft", "target_divided_by_rx", "echo_doppler", "movement_type"},
-    {"target_divided_by_rx", "echo_doppler", "movement_type"},
-    {"target_divided_by_rx", "diff_from_desired", "movement_type"}};
-
-base_fig_dir = "C:\Users\yotam\Desktop\figs3\";
+%     {"target_divided_by_rx", "echo_doppler", "movement_type"},
+%     {"target_divided_by_rx", "diff_from_desired", "movement_type"}};
+};
 prediction_name = "tx_freq";
 
-n_windows = [2,3];
+
+n_windows = [2,3,4,5];
 bat_nums = [2,4,5];
 
 for bat_num = bat_nums
@@ -37,7 +37,9 @@ for bat_num = bat_nums
             unq_mvmt = unique(X_table.("movement_type-1"));
             for ith_type = 1:length(unq_mvmt)
                 type_of_movement = unq_mvmt(ith_type);
-                assert(all(vaild_inds))
+%                 if ~all(vaild_inds)
+%                     continue
+%                 end
                 [pred_vals, coef_table, bic_val, mdl] = GLMPredict(X_table(strcmp(X_table.("movement_type-1"),type_of_movement),:), prediction_name);
                 figure;
                 plot(pred_vals, mdl.Variables.(prediction_name), "."); hold on; 
