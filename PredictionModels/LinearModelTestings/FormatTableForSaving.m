@@ -38,6 +38,10 @@ if string_chars(1) == "0"
         out_string = "0."+string_chars(idx:idx+1);
     end
     first_char_significant = false;
+elseif str2double(string_chars)>=10
+    idx_dot = strfind(string_chars, ".")-2;
+    out_string = string_chars(1)+"."+string_chars(2)+"e"+num2str(idx_dot);
+    first_char_significant = true;
 else
     out_string = string_chars(1:3);
     first_char_significant = true;

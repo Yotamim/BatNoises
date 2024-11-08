@@ -46,7 +46,7 @@ for ith_folder = 3:length(all_res_folders)
             res_cell_per_audio{ith_row,res_len+3} = (closest_gps_time - start_time_of_audio-tx_time/3600/24)*24*3600;
 
         end
-        save(cur_folder+cur_audio_mat(1:end-4)+"_with_gps_"+bat_str_num,"res_cell_per_audio")
+%         save(cur_folder+cur_audio_mat(1:end-4)+"_with_gps_"+bat_str_num,"res_cell_per_audio")
     end   
     toc
 end

@@ -1,7 +1,7 @@
 clear
-base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\figs_240526-rx_to_tx_rat\";
-features_raw = string({"tx_diveded_by_rx"});
-
+base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\figs_240921-continues-dop-delay\";
+features_raw = string({"echo_doppler","delay"});
+%     {'tx_diveded_by_rx'} {'max_doppler_diff'} {'rx_var'} {'echo_doppler'} 
 dir1 = dir(base_fig_dir);
 all_mat_files = {};
 for i = 3:length(dir1)
@@ -61,7 +61,7 @@ for n_window = ["2_calls", "3_calls","4_calls","5_calls"]
                         end
                     end
                     per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+1} = length(mdl.Residuals.Raw);
-                    per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+2} = num2str(vecnorm(mdl.Residuals.Raw));
+                    per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+2} = num2str(vecnorm(mdl.Residuals.Raw)/sqrt(length(mdl.Residuals.Raw)));
                     per_bat_empty_cell_array{movement_counter, length(wind_features_raw)+3} = num2str(mdl.ModelCriterion.BIC);
                     per_bat_empty_cell_array = [per_bat_empty_cell_array;cell(1, length(wind_features_raw)+3)];
                 end

@@ -54,7 +54,7 @@ for ith_folder = 3:length(all_res_folders)
             res_cell_per_audio{i,res_cell_len+5} = min_rx;
             res_cell_per_audio{i,res_cell_len+6} = max_rx;
         end
-        save(cur_folder+cur_audio_mat(1:end-4)+"_with_var", "res_cell_per_audio")
+%         save(cur_folder+cur_audio_mat(1:end-4)+"_with_var", "res_cell_per_audio")
     end
 end
 

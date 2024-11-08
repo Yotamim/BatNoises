@@ -22,18 +22,18 @@ max_energy_over_time = max(cut_spec_sum_time);
 start_time = t_axis_spec(cut_spec_sum_time/max_energy_over_time>factor_of_start);
 start_time = start_time(1);
 
-figure; 
-climsss = [max(cut_spec(:))-30, max(cut_spec(:))];
-if ~tx_flag
-    imagesc(t_axis_spec,f_axis_spec(ind_max_freq-range_arond_max_freq :ind_max_freq+range_arond_max_freq), pow2db(cut_spec), climsss )
-else
-    imagesc(t_axis_spec,f_axis_spec, pow2db(cut_spec), climsss )
-end
-colormap jet
-set(gca, "YDir", "normal")
-xlabel("time");
-ylabel("freq");
-spec_lim = get(gca,"XLim");
-title("spectogram")
+% figure; 
+% climsss = [max(cut_spec(:))-30, max(cut_spec(:))];
+% if ~tx_flag
+%     imagesc(t_axis_spec,f_axis_spec(ind_max_freq-range_arond_max_freq :ind_max_freq+range_arond_max_freq), pow2db(cut_spec), climsss )
+% else
+%     imagesc(t_axis_spec,f_axis_spec, pow2db(cut_spec), climsss )
+% end
+% colormap jet
+% set(gca, "YDir", "normal")
+% xlabel("time");
+% ylabel("freq");
+% spec_lim = get(gca,"XLim");
+% title("spectogram")
 
 end

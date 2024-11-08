@@ -1,14 +1,15 @@
 clear; close all;
 %% Load and prepare data
 data_preperation_script
-base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\figs_240526-rx_to_tx_rat\";
+base_fig_dir = "C:\Users\yotam\Desktop\FigsAndTables\normalized-std-mean";
+% assert(length(ls(fullfile(base_fig_dir, "2/2_calls/"))) == 2) 
 res_table_2_peaks.max_doppler_diff = res_table_2_peaks.max_doppler-res_table_2_peaks.tx_freq_from_filtered_tx_fft;
 %% Pre loop
 threshold_dict_sig = struct("tx_freq_from_filtered_tx_fft", [77000,81000], "rx_freq", [78500,82000], "durations", [0,0.15]);
 
 features_combinations = {
-%     {"echo_doppler", "movement_type"},
-      {"tx_diveded_by_rx", "movement_type"},
+    {"echo_doppler","rx_var", "movement_type"},
+%       {"tx_diveded_by_rx", "movement_type"},
 %     {"tx_freq_from_filtered_tx_fft", "target_divided_by_rx", "echo_doppler", "movement_type"},
 %     {"target_divided_by_rx", "echo_doppler", "movement_type"},
 %     {"target_divided_by_rx", "diff_from_desired", "movement_type"}};
@@ -20,14 +21,17 @@ n_windows = [2,3,4,5];
 bat_nums = [2,4,5];
 
 for bat_num = bat_nums
+    cont_inds_cell = GetNContinuesInds(all_tx_time,res_table_2_peaks.bat_num, 5);
+    cur_2_peaks_table = res_table_2_peaks(any([cont_inds_cell{:}], 2), :);
+    cur_all_tx_time = all_tx_time(any([cont_inds_cell{:}], 2));
     for ith_window = 1:length(n_windows)
         for jj = 1:length(features_combinations)
             n_window = n_windows(ith_window);
             features = features_combinations{jj};
 
-            cont_inds_cell = GetNContinuesInds(all_tx_time,res_table_2_peaks.bat_num, n_window);
+            cont_inds_cell = GetNContinuesInds(cur_all_tx_time,cur_2_peaks_table.bat_num, n_window);
             [X_lsboost, y_lsboost, var_names, cont_inds_as_rows_passing_thrsholds, vaild_inds, cur_bat_gps_match] = ...
-                ContIndsAndFeatures2XData(res_table_2_peaks, threshold_dict_sig, cont_inds_cell,...
+                ContIndsAndFeatures2XData(cur_2_peaks_table, threshold_dict_sig, cont_inds_cell,...
                 features, n_window, bat_num, prediction_name);
             vaild_inds = vaild_inds(:,1);
             y = y_lsboost(:,1);
@@ -35,6 +39,7 @@ for bat_num = bat_nums
             var_names{end+1} = prediction_name;
             X_table = array2table([X_lsboost(vaild_inds,:),y(vaild_inds,:)],'VariableNames',string(var_names(2:end).'));
             unq_mvmt = unique(X_table.("movement_type-1"));
+
             for ith_type = 1:length(unq_mvmt)
                 type_of_movement = unq_mvmt(ith_type);
 %                 if ~all(vaild_inds)
